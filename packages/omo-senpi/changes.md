@@ -1,3 +1,11 @@
+## 2026-10-01 - session gateway review round 8: receipt batch per call, completion arms per run, recovery-key bound (#9222)
+
+- `gateway/store-retention.ts` / `store-relay-ops.ts` / `store-ops.ts`: a call that reuses an expired key deletes at
+  most one batch of receipts in total. The receipt check deletes the expired receipt under the call's own key, and the
+  sweep that follows deleted a full batch besides, so a peer tool call, keyed relay mutation or keyed send could remove
+  `RETENTION_SWEEP_BATCH + 1` receipts. The key's deletion now counts against the sweep's receipt batch, and a batch
+  used up that way still makes the next sweep due at once.
+
 ## 2026-10-01 - session gateway review round 7: receipt retention, completion arms, replay after unbind, lost receipt replies (#9222)
 
 - `gateway/store-relay-ops.ts` `toolReceiptBegin`: a peer tool call's receipt admission runs the bounded retention
